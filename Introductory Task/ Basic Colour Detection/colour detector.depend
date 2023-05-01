@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1681672829 source:c:\users\hasee\documents\lab report 3\colour detector\main.cpp
+	<opencv2/opencv.hpp>
+	<iostream>
+
