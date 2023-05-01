@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1677020152 source:c:\users\hasee\documents\lab report 3\hue_slider\main.cpp
+	<opencv2/opencv.hpp>
+	<iostream>
+
