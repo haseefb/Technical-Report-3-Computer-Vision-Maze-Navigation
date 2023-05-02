@@ -127,82 +127,92 @@ int main( int argc, char** argv )
         {
         case 1: // triangle
             std::cout << "Detected shape: Triangle\n"<< std::endl;
-// Print "red" on the console
-            std::cout << "red" << std::endl;
-            cv::inRange(hsv, cv::Scalar(0, 70, 50), cv::Scalar(10, 255, 255), mask);
-            cv::inRange(hsv, cv::Scalar(170, 70, 50), cv::Scalar(180, 255, 255), mask);
-            break;
-        case 2: // Star
-            std::cout << "Detected shape: Star\n"<< std::endl;
-// Print "yellow" on the console
-            std::cout << "yellow" << std::endl;
-            cv::inRange(hsv, cv::Scalar(15, 70, 70), cv::Scalar(35, 255, 255), mask);
-            break;
-        case 3: // Circle
-            std::cout << "Detected shape: Circle\n"<< std::endl;
-// Print "blue" on the console
+            // Print "blue" on the console
             std::cout << "blue" << std::endl;
             cv::inRange(hsv, cv::Scalar(100, 70, 50), cv::Scalar(130, 255, 255), mask);
             break;
-        case 4: // Umbrella
-            std::cout << "Detected shape: Umbrella\n"<< std::endl;
-// Print "green" on the console
+        case 2: // Star
+            std::cout << "Detected shape: Star\n"<< std::endl;
+            // Print "green" on the console
             std::cout << "green" << std::endl;
             cv::inRange(hsv, cv::Scalar(35, 70, 50), cv::Scalar(70, 255, 255), mask);
             break;
+        case 3: // Circle
+            std::cout << "Detected shape: Circle\n"<< std::endl;
+            // Print "red" on the console
+            std::cout << "red" << std::endl;
+            cv::inRange(hsv, cv::Scalar(0, 70, 50), cv::Scalar(10, 255, 255), mask);
+            cv::inRange(hsv, cv::Scalar(170, 70, 50), cv::Scalar(180, 255, 255), mask);
+
+            break;
+        case 4: // Umbrella
+            std::cout << "Detected shape: Umbrella\n"<< std::endl;
+            // Print "yellow" on the console
+            std::cout << "yellow" << std::endl;
+            cv::inRange(hsv, cv::Scalar(15, 70, 70), cv::Scalar(35, 255, 255), mask);
+            break;
         default:
             std::cout << "No shape detected\n"<< std::endl;
-// Print "Black" on the console
+            // Print "Black" on the console
             std::cout << "Black" << std::endl;
             cv::inRange(hsv, cv::Scalar(0, 0, 0), cv::Scalar(180, 255, 30), mask);
 
             break;
         }
 // Find contours in the mask
-std::vector<std::vector<cv::Point>> contours;
-cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        std::vector<std::vector<cv::Point>> contours;
+        cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
 // Get the first and last point of the contour and calculate the range
-int firstPixel = -1;
-int lastPixel = -1;
-int range = -1;
- int largestContourIndex = 0;
-if (!contours.empty()) {
-    // Get the contour with the largest area
+        int firstPixel = -1;
+        int lastPixel = -1;
+        int range = -1;
+        int largestContourIndex = 0;
+        if (!contours.empty())
+        {
+            // Get the contour with the largest area
 
-    double largestContourArea = cv::contourArea(contours[0]);
-    for (int i = 1; i < contours.size(); i++) {
-        double area = cv::contourArea(contours[i]);
-        if (area > largestContourArea) {
-            largestContourIndex = i;
-            largestContourArea = area;
+            double largestContourArea = cv::contourArea(contours[0]);
+            for (int i = 1; i < contours.size(); i++)
+            {
+                double area = cv::contourArea(contours[i]);
+                if (area > largestContourArea)
+                {
+                    largestContourIndex = i;
+                    largestContourArea = area;
+                }
+            }
+            // Get the first and last point of the contour
+            std::vector<cv::Point> contour = contours[largestContourIndex];
+            for (int i = 0; i < contour.size(); i++)
+            {
+                int x = contour[i].x;
+                if (firstPixel == -1 || x < firstPixel)
+                {
+                    firstPixel = x;
+                }
+                if (lastPixel == -1 || x > lastPixel)
+                {
+                    lastPixel = x;
+                }
+            }
+            // Calculate the range
+            range = lastPixel - firstPixel;
         }
-    }
-    // Get the first and last point of the contour
-    std::vector<cv::Point> contour = contours[largestContourIndex];
-    for (int i = 0; i < contour.size(); i++) {
-        int x = contour[i].x;
-        if (firstPixel == -1 || x < firstPixel) {
-            firstPixel = x;
-        }
-        if (lastPixel == -1 || x > lastPixel) {
-            lastPixel = x;
-        }
-    }
-    // Calculate the range
-    range = lastPixel - firstPixel;
-}
 
 // Draw the contours on the original image (RED) and show the range on the console
-if (firstPixel != -1 && lastPixel != -1) {
-    cv::drawContours(frame, contours, largestContourIndex, cv::Scalar(0, 0, 255), 2);
-    std::cout << "Range: " << range << ", First pixel: " << firstPixel << ", Last pixel: " << lastPixel << std::endl;
-} else {
-    std::cout << "No contour detected" << std::endl;
-}
+        if (firstPixel != -1 && lastPixel != -1)
+        {
+            cv::drawContours(frame, contours, largestContourIndex, cv::Scalar(0, 0, 255), 2);
+            std::cout << "Range: " << range << ", First pixel: " << firstPixel << ", Last pixel: " << lastPixel << std::endl;
+        }
+        else
+        {
+            std::cout << "No contour detected" << std::endl;
+        }
 
 
-       double midpoint = range / 2;
+        double midpoint = range / 2;
         error = midpoint- setpoint;
         integral += error;
         derivative = error - previous_error;
